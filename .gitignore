@@ -1,3 +1,10 @@
+# Agent
+.agent
+
+#pth
+*.pth
+
+
 # Github's default gitignore for Python
 
 # Byte-compiled / optimized / DLL files
