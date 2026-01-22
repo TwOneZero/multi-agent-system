@@ -1,6 +1,7 @@
-from litellm import completion
-from dotenv import load_dotenv
 import os
+
+from dotenv import load_dotenv
+from litellm import completion
 
 load_dotenv(override=True)
 
@@ -32,7 +33,10 @@ class Preprocessor:
             self.base_url = "http://localhost:11434"
 
     def messages_for(self, text: str) -> list[dict]:
-        return [{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": text}]
+        return [
+            {"role": "system", "content": SYSTEM_PROMPT},
+            {"role": "user", "content": text},
+        ]
 
     def preprocess(self, text: str) -> str:
         messages = self.messages_for(text)

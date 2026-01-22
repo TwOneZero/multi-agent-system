@@ -1,12 +1,9 @@
+import logging
+
 import numpy as np
-from tqdm.notebook import tqdm
 import torch
 import torch.nn as nn
-import torch.optim as optim
-from torch.utils.data import DataLoader, TensorDataset
-from torch.optim.lr_scheduler import CosineAnnealingLR
 from sklearn.feature_extraction.text import HashingVectorizer
-import logging
 
 
 class ResidualBlock(nn.Module):
@@ -73,7 +70,9 @@ class DeepNeuralNetworkInference:
         torch.cuda.manual_seed(42)
 
     def setup(self):
-        self.vectorizer = HashingVectorizer(n_features=5000, stop_words="english", binary=True)
+        self.vectorizer = HashingVectorizer(
+            n_features=5000, stop_words="english", binary=True
+        )
         self.model = DeepNeuralNetwork(5000)
         if torch.cuda.is_available():
             self.device = torch.device("cuda")

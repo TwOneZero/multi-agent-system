@@ -1,7 +1,7 @@
-from pydantic import BaseModel
-from datasets import Dataset, DatasetDict, load_dataset
 from typing import Optional, Self
 
+from datasets import Dataset, DatasetDict, load_dataset
+from pydantic import BaseModel
 
 PREFIX = "Price is $"
 QUESTION = "What does this cost to the nearest dollar?"
@@ -31,7 +31,9 @@ class Item(BaseModel):
         return f"<{self.title} = ${self.price}>"
 
     @staticmethod
-    def push_to_hub(dataset_name: str, train: list[Self], val: list[Self], test: list[Self]):
+    def push_to_hub(
+        dataset_name: str, train: list[Self], val: list[Self], test: list[Self]
+    ):
         """Push Item lists to HuggingFace Hub"""
         DatasetDict(
             {

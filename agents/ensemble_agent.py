@@ -1,8 +1,8 @@
 from agents.agent import Agent
-from agents.specialist_agent import SpecialistAgent
 from agents.frontier_agent import FrontierAgent
 from agents.neural_network_agent import NeuralNetworkAgent
 from agents.preprocessor import Preprocessor
+from agents.specialist_agent import SpecialistAgent
 
 
 class EnsembleAgent(Agent):

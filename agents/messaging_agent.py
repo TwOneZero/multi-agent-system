@@ -1,16 +1,20 @@
 import os
-from agents.deals import Opportunity
-from agents.agent import Agent
-from litellm import completion
 import smtplib
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+from litellm import completion
+
+from agents.agent import Agent
+from agents.deals import Opportunity
 
 
 class MessagingAgent(Agent):
     name = "Messaging Agent"
     color = Agent.WHITE
-    MODEL = "gemini/gemini-2.5-flash-lite"  # LiteLLM format: gemini/ prefix for Gemini API
+    MODEL = (
+        "gemini/gemini-2.5-flash-lite"  # LiteLLM format: gemini/ prefix for Gemini API
+    )
 
     def __init__(self):
         """
@@ -26,10 +30,10 @@ class MessagingAgent(Agent):
     def _create_email_html_content(self, text):
         """
         Create HTML formatted email content for deal alerts
-        
+
         Args:
             text: The message text to include in the email
-            
+
         Returns:
             str: HTML formatted email content
         """
@@ -100,45 +104,41 @@ class MessagingAgent(Agent):
         </html>
         """
         return html_content
-    
+
     def push(self, text):
         """
         Send a message via email using smtplib with MIME formatting
         """
         self.log("Messaging Agent is sending a push notification")
-        
+
         try:
             # Create multipart message with both HTML and plain text
-            msg = MIMEMultipart('alternative')
-            msg['Subject'] = '🔔 Deal Alert - Don\'t Miss This Opportunity!'
-            msg['From'] = self.gmail_user
-            msg['To'] = self.gmail_to
-            
+            msg = MIMEMultipart("alternative")
+            msg["Subject"] = "🔔 Deal Alert - Don't Miss This Opportunity!"
+            msg["From"] = self.gmail_user
+            msg["To"] = self.gmail_to
+
             # Plain text version
-            text_part = MIMEText(text, 'plain', 'utf-8')
-            
+            text_part = MIMEText(text, "plain", "utf-8")
+
             # HTML version with nice formatting
             html_content = self._create_email_html_content(text)
-            html_part = MIMEText(html_content, 'html', 'utf-8')
-            
+            html_part = MIMEText(html_content, "html", "utf-8")
+
             # Attach parts (plain text first, then HTML as preferred)
             msg.attach(text_part)
             msg.attach(html_part)
-            
             # Connect to Gmail SMTP server with TLS encryption
-            with smtplib.SMTP('smtp.gmail.com', 587) as server:
+            with smtplib.SMTP("smtp.gmail.com", 587) as server:
                 server.ehlo()  # Identify ourselves to the SMTP server
                 server.starttls()  # Secure the connection
                 server.ehlo()  # Re-identify as an encrypted connection
                 server.login(self.gmail_user, self.gmail_pwd)
                 server.send_message(msg)
-            
             self.log("✅ Email sent successfully!")
-            
         except Exception as e:
             self.log(f"❌ Failed to send email: {str(e)}")
             raise
-       
 
     def alert(self, opportunity: Opportunity):
         """
@@ -167,11 +167,13 @@ class MessagingAgent(Agent):
         )
         return response.choices[0].message.content
 
-    def notify(self, description: str, deal_price: float, estimated_true_value: float, url: str):
+    def notify(
+        self, description: str, deal_price: float, estimated_true_value: float, url: str
+    ):
         """
         Make an alert about the specified details
         """
         self.log("Messaging Agent is using Claude to craft the message")
         text = self.craft_message(description, deal_price, estimated_true_value)
-        self.push(text+ "... " + url)
+        self.push(text + "... " + url)
         self.log("Messaging Agent has completed")
